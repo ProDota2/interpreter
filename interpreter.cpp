@@ -90,9 +90,8 @@ void doit(int line){
 		print(line);
 	if (code[line][0] == "println")
 		println(line);
-	if (type[line][1] == 3){
+	if (type[line][1] == 3)
 		var[code[line][0]] = calc(line, 2);
-	}
 }
 void interpret2(){
 	for (int i = 0; i<code.size(); i++){

@@ -3,11 +3,11 @@
 using namespace std;
 int ToInt(string s){
 	int ans = 0;
-	for (int i = s.length() - 1; i >= 0; i--)
+	for (int i = 0; i < s.length(); i++)
 		ans *= 10, ans += s[i] - '0';
 	return ans;
 }
-void error(int x,int line = 0){
+void error(int x, int line = 0){
 	if (x == 0){
 		cout << "ERROR\n";
 		cout << "division by zero\n";
