@@ -37,11 +37,53 @@ void parse(){
 				type[j].push_back(1);
 			}
 			add = "";
-			if (s[i] == '='){
-				while (s[i] == '=' && i < s.length())
-					add += s[i], i++;
-				code[j].push_back(add);
+			if (s[i] == '=' && s[i + 1] != '='){
+				code[j].push_back("=");
 				type[j].push_back(3);
+				i += 1;
+				continue;
+			}
+			if (s[i] == '=' && s[i + 1] == '='){
+				code[j].push_back("==");
+				type[j].push_back(3);
+				i += 1;
+				continue;
+			}
+			if (s[i] == '<' && s[i + 1] == '='){
+				code[j].push_back("<=");
+				type[j].push_back(3);
+				i += 1;
+				continue;
+			}
+			if (s[i] == '>' && s[i + 1] == '='){
+				code[j].push_back(">=");
+				type[j].push_back(3);
+				i += 1;
+				continue;
+			}
+			if (s[i] == '>' && s[i+1]!='='){
+				code[j].push_back(">");
+				type[j].push_back(3);
+				//i++;
+				continue;
+			}
+			if (s[i] == '<'&& s[i+1]!='='){
+				code[j].push_back("<");
+				type[j].push_back(3);
+				i += 1;
+				continue;
+			}
+			if (s[i] == '}'){
+				code[j].push_back("}");
+				type[j].push_back(3);
+				//i++;
+				continue;
+			}
+			if (s[i] == '{'){
+				code[j].push_back("{");
+				type[j].push_back(3);
+				//i++;
+				continue;
 			}
 			add = s[i];
 			if (s[i] == '+')
@@ -57,11 +99,14 @@ void parse(){
 	}
 }
 int calc(int line, int from){
-	char oper = '+';
+	string oper = "+";
 	int ans = 0;
 	for (int i = from; i < code[line].size(); i++){
+		if (oper == ">" || oper == "<" || oper == ">=" || oper == "<=" || oper == "=="){
+			return check(ans, calc(line, i), oper);
+		}
 		if (type[line][i] == 3)
-			oper = code[line][i][0];
+			oper = code[line][i];
 		else
 		if (type[line][i] == 2)
 			ans = obr(ans, var[code[line][i]], oper);
@@ -84,6 +129,10 @@ void read(int line){
 	}
 }
 void doit(int line){
+	if (code[line][0] == "{")
+		return;
+	if (code[line][0] == "}")
+		return;
 	if (code[line][0] == "read")
 		read(line);
 	if (code[line][0] == "print")
@@ -93,10 +142,30 @@ void doit(int line){
 	if (type[line][1] == 3)
 		var[code[line][0]] = calc(line, 2);
 }
-void interpret2(){
-	for (int i = 0; i<code.size(); i++){
+void interpret2(int from ,int to){
+	for (int i = from; i < to; i++){
 		if (code[i][0] != "for" && code[i][0] != "if"){
 			doit(i);
+		}
+		if (code[i][0] == "if"){
+			int c = 0;
+			int tt = from;
+			for (int j = i + 1; j < to; j++){
+				if (code[j].size()>1 && code[j][0] == "{")
+					c++;
+				if (code[j].size()>1 && code[j][0] == "}")
+					c--;
+				if (c == 0){
+					tt = j;
+					break;
+				}
+			}
+			if (calc(i, 1) == 1){
+				interpret2(i+1, tt);
+			}
+			else{
+				i = tt+1;
+			}
 		}
 	}
 }
@@ -106,12 +175,12 @@ int main(int argc, char* argv[]){
 	if (argc > 1){
 		fin = ifstream(argv[argc - 1]);
 		parse();
-		interpret2();
+		interpret2(0, code.size());
 	}
 	else{
 		fin = ifstream("ppp.myl");
 		parse();
-		interpret2();
+		interpret2(0, code.size());
 		//interpret();
 	}
 	return 0;

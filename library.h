@@ -7,7 +7,7 @@ int ToInt(string s){
 		ans *= 10, ans += s[i] - '0';
 	return ans;
 }
-void error(int x, int line = 0){
+void error(int x,int line = 0){
 	if (x == 0){
 		cout << "ERROR\n";
 		cout << "division by zero\n";
@@ -22,17 +22,35 @@ void error(int x, int line = 0){
 	system("pause");
 	exit(0);
 }
-int obr(int now, int x, char oper){
-	if (oper == '+')
+bool check(int x, int y, string s){
+	if (s == "==")
+	if (x == y)
+		return true;
+	if (s == ">=")
+	if (x >= y)
+		return true;
+	if (s == "<=")
+	if (x <= y)
+		return true;
+	if (s == ">")
+	if (x > y)
+		return true;
+	if (s == "<")
+	if (x < y)
+		return true;
+	return false;
+}
+int obr(int now, int x, string oper){
+	if (oper == "+")
 		now += x;
-	if (oper == '-')
+	if (oper == "-")
 		now -= x;
-	if (oper == '*')
+	if (oper == "*")
 		now *= x;
-	if (x == 0 && oper == '/'){
+	if (x == 0 && oper == "/"){
 		error(0);
 	}
-	if (oper == '/')
+	if (oper == "/")
 		now /= x;
 	return now;
 }
